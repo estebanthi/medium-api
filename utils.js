@@ -8,7 +8,12 @@ const formatMediumResponse = (response) => {
     return parsedBody
 }
 
+const getMediumMediaUrl = (mediaId) => {
+    return `${constants.mediumMediaUrl}/${mediaId}`
+}
+
 
 module.exports = {
     formatMediumResponse,
+    getMediumMediaUrl
 }
