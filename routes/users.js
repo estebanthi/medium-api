@@ -186,6 +186,57 @@ router.get('/:userId/followers', async function (req, res) {
 })
 
 
+router.get('/:userId/posts', async function (req, res) {
+    const count = req.query.count
+    const baseUrl = `${constants.mediumApiUrl}/users/${req.params.userId}/profile/stream?limit=150&page=10000`
+
+    let posts = []
+
+    const getPosts = async (url) => {
+        return new Promise((resolve, reject) => {
+            request(url, function (err, response, body) {
+                if (err) {
+                    console.error(err)
+                    return reject(err)
+                }
+
+                const parsedBody = utils.formatMediumResponse(response)
+
+                if (!parsedBody.success) {
+                    return reject(parsedBody.error)
+                }
+
+                if (parsedBody.success && !parsedBody.payload.paging.next) {
+                    return resolve()
+                }
+
+                const postsData = parsedBody.payload.references.Post
+                const postIds = Object.keys(postsData)
+                posts = posts.concat(postIds)
+
+                if (count && posts.length >= count) {
+                    posts = posts.slice(0, count)
+                    return resolve()
+                }
+
+                if (parsedBody.payload.paging.next) {
+                    return resolve(getPosts(`${baseUrl}&to=${parsedBody.payload.paging.next.to}`))
+                }
+
+                return resolve()
+            })
+        })
+    }
+
+    try {
+        await getPosts(baseUrl)
+        res.send({ success: true, data: posts })
+    }
+    catch (err) {
+        res.status(500).send({success: false, error: err})
+    }
+})
+
 
 
 module.exports = router
