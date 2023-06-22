@@ -8,8 +8,6 @@ const router = express.Router()
 
 router.get('/id_for/:username', function (req, res) {
 
-
-
     const url = `${constants.mediumApiUrl}/users/@${req.params.username}`
 
     request(url, function (err, response, body) {
@@ -21,7 +19,7 @@ router.get('/id_for/:username', function (req, res) {
         const parsedBody = utils.formatMediumResponse(response)
 
         if (!parsedBody.success) {
-            return res.status(404).send({ success: false, error: "User not found" })
+            return res.status(404).send({ success: false, error: parsedBody.error })
         }
 
         const userId = parsedBody.payload.value.userId
@@ -45,7 +43,7 @@ router.get('/:userId', function (req, res) {
         const parsedBody = utils.formatMediumResponse(response)
 
         if (!parsedBody.success) {
-            return res.status(404).send()
+            return res.status(404).send({ success: false, error: parsedBody.error })
         }
 
         const username = parsedBody.payload.references.User[req.params.userId].username
@@ -80,6 +78,114 @@ router.get('/:userId', function (req, res) {
 
     })
 })
+
+
+router.get('/:userId/following', async function (req, res) {
+    const count = req.query.count
+    const baseUrl = `${constants.mediumApiUrl}/users/${req.params.userId}/following?limit=100`
+
+    let following = []
+
+    const getFollowing = async (url) => {
+        return new Promise((resolve, reject) => {
+            request(url, function (err, response, body) {
+                if (err) {
+                    console.error(err)
+                    return reject(err)
+                }
+
+                const parsedBody = utils.formatMediumResponse(response)
+
+                if (!parsedBody.success) {
+                    return reject(parsedBody.error)
+                }
+
+                if (parsedBody.success && !parsedBody.payload.paging.next) {
+                    return resolve()
+                }
+
+                const users = parsedBody.payload.references.User
+                const userIds = Object.keys(users)
+                following = following.concat(userIds)
+
+                if (count && following.length >= count) {
+                    following = following.slice(0, count)
+                    return resolve()
+                }
+
+                if (parsedBody.payload.paging.next) {
+                    return resolve(getFollowing(`${baseUrl}&to=${parsedBody.payload.paging.next.to}`))
+                }
+
+                return resolve()
+            })
+        })
+    }
+
+    try {
+        await getFollowing(baseUrl)
+        res.send({ success: true, data: following })
+    }
+    catch (err) {
+        res.status(500).send({ success: false, error: err })
+    }
+
+
+})
+
+
+router.get('/:userId/followers', async function (req, res) {
+    const count = req.query.count
+    const baseUrl = `${constants.mediumApiUrl}/users/${req.params.userId}/followers?limit=100`
+
+    let followers = []
+
+    const getFollowers = async (url) => {
+        return new Promise((resolve, reject) => {
+            request(url, function (err, response, body) {
+                if (err) {
+                    console.error(err)
+                    return reject(err)
+                }
+
+                const parsedBody = utils.formatMediumResponse(response)
+
+                if (!parsedBody.success) {
+                    return reject(parsedBody.error)
+                }
+
+                if (parsedBody.success && !parsedBody.payload.paging.next) {
+                    return resolve()
+                }
+
+                const users = parsedBody.payload.references.User
+                const userIds = Object.keys(users)
+                followers = followers.concat(userIds)
+
+                if (count && followers.length >= count) {
+                    followers = followers.slice(0, count)
+                    return resolve()
+                }
+
+                if (parsedBody.payload.paging.next) {
+                    return resolve(getFollowers(`${baseUrl}&to=${parsedBody.payload.paging.next.to}`))
+                }
+
+                return resolve()
+            })
+        })
+    }
+
+    try {
+        await getFollowers(baseUrl)
+        res.send({ success: true, data: followers })
+    }
+    catch (err) {
+        res.status(500).send({success: false, error: err})
+    }
+})
+
+
 
 
 module.exports = router
