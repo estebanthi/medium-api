@@ -5,6 +5,9 @@ const express = require('express')
 const app = express()
 
 // Routes and middleware
+const usersRouter = require('./routes/users')
+
+app.use('/users', usersRouter)
 
 
 // Error handlers
@@ -17,10 +20,6 @@ app.use(function fiveHundredHandler (err, req, res, next) {
 })
 
 // Start server
-app.listen(1234, function (err) {
-  if (err) {
-    return console.error(err)
-  }
-
-  console.log('Started at http://localhost:1234')
+app.listen(process.env.PORT || 3000, function () {
+    console.log(`Listening on port ${this.address().port}`)
 })
