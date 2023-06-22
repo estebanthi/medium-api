@@ -186,7 +186,7 @@ router.get('/:userId/followers', async function (req, res) {
 })
 
 
-router.get('/:userId/posts', async function (req, res) {
+router.get('/:userId/articles', async function (req, res) {
     const count = req.query.count
     const baseUrl = `${constants.mediumApiUrl}/users/${req.params.userId}/profile/stream?limit=150&page=10000`
 
@@ -235,6 +235,28 @@ router.get('/:userId/posts', async function (req, res) {
     catch (err) {
         res.status(500).send({success: false, error: err})
     }
+})
+
+
+router.get('/:userId/publications', function (req, res) {
+    const url = `${constants.mediumApiUrl}/users/${req.params.userId}/collections`
+
+    request(url, function (err, response, body) {
+        if (err) {
+            console.error(err)
+            return res.status(500).send({ success: false, error: err })
+        }
+
+        const parsedBody = utils.formatMediumResponse(response)
+
+        if (!parsedBody.success) {
+            return res.status(500).send({ success: false, error: parsedBody.error })
+        }
+
+        const publications = parsedBody.payload.value
+        const publicationIds = publications.map(publication => publication.id)
+        res.send({ success: true, data: publicationIds })
+    })
 })
 
 
