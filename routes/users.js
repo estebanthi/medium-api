@@ -259,5 +259,79 @@ router.get('/:userId/publications', function (req, res) {
 })
 
 
+router.get('/:userId/top_articles', async function (req, res) {
+    const count = req.query.count || 10
+    const baseUrl = `${constants.mediumApiUrl}/users/${req.params.userId}/profile/stream?limit=150&page=10000`
+
+    let posts = []
+
+    const getPosts = async (url) => {
+        return new Promise((resolve, reject) => {
+            request(url, function (err, response, body) {
+                if (err) {
+                    return reject(err)
+                }
+
+                const parsedBody = utils.formatMediumResponse(response)
+
+                if (!parsedBody.success) {
+                    return reject(parsedBody.error)
+                }
+
+                if (parsedBody.success && !parsedBody.payload.paging.next) {
+                    return resolve()
+                }
+
+                const postsData = parsedBody.payload.references.Post
+                const postIds = Object.keys(postsData)
+                posts = posts.concat(postIds)
+
+                if (parsedBody.payload.paging.next) {
+                    return resolve(getPosts(`${baseUrl}&to=${parsedBody.payload.paging.next.to}`))
+                }
+
+                return resolve()
+            })
+        })
+    }
+
+    try {
+        await getPosts(baseUrl)
+        const postsWithClaps = await Promise.all(posts.map(postId => {
+            return new Promise((resolve, reject) => {
+                const url = `${constants.mediumApiUrl}/posts/${postId}`
+                request(url, function (err, response, body) {
+                    if (err) {
+                        return reject(err)
+                    }
+
+                    const parsedBody = utils.formatMediumResponse(response)
+
+                    if (!parsedBody.success) {
+                        return reject(parsedBody.error)
+                    }
+
+                    const post = parsedBody.payload.value
+                    return resolve(post)
+                })
+            })
+        }))
+
+        const sortedPosts = postsWithClaps.sort((a, b) => {
+            console.log(a.virtuals.totalClapCount, b.virtuals.totalClapCount)
+            return b.virtuals.totalClapCount - a.virtuals.totalClapCount
+        })
+
+        const topPosts = sortedPosts.slice(0, count).map(post => post.id)
+        res.send({ success: true, data: topPosts })
+    }
+
+    catch (err) {
+        res.status(500).send({success: false, error: err})
+    }
+
+})
+
+
 
 module.exports = router

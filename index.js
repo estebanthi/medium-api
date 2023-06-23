@@ -6,11 +6,11 @@ const app = express()
 
 // Routes and middleware
 const usersRouter = require('./routes/users')
-const postsRouter = require('./routes/posts')
+const postsRouter = require('./routes/articles')
 const publicationsRouter = require('./routes/publications')
 
 app.use('/users', usersRouter)
-app.use('/posts', postsRouter)
+app.use('/articles', postsRouter)
 app.use('/publications', publicationsRouter)
 
 
