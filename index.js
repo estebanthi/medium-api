@@ -8,10 +8,12 @@ const app = express()
 const usersRouter = require('./routes/users')
 const postsRouter = require('./routes/articles')
 const publicationsRouter = require('./routes/publications')
+const miscRouter = require('./routes/misc')
 
 app.use('/users', usersRouter)
 app.use('/articles', postsRouter)
 app.use('/publications', publicationsRouter)
+app.use('/', miscRouter)
 
 
 // Error handlers

@@ -259,7 +259,7 @@ router.get('/:userId/publications', function (req, res) {
 })
 
 
-router.get('/:userId/top_articles', async function (req, res) {
+router.get('/:userId/top-articles', async function (req, res) {
     const count = req.query.count || 10
     const baseUrl = `${constants.mediumApiUrl}/users/${req.params.userId}/profile/stream?limit=150&page=10000`
 
