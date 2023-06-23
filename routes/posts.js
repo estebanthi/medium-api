@@ -68,4 +68,81 @@ router.get('/:postId', function (req, res) {
 })
 
 
+router.get('/:postId/content', function (req, res) {
+    const url = `${constants.mediumApiUrl}/posts/${req.params.postId}`
+
+    request(url, function (err, response, body) {
+        if (err) {
+            console.error(err)
+            return res.status(500).send()
+        }
+
+        const parsedBody = utils.formatMediumResponse(response)
+
+        if (!parsedBody.success) {
+            return res.status(404).send({ success: false, error: parsedBody.error })
+        }
+
+        const contentArray = parsedBody.payload.value.content.bodyModel.paragraphs.map(paragraph => {
+            if (paragraph.text) {
+                return paragraph.text
+            }
+        })
+
+        const content = contentArray.join("\n\n")
+
+        res.send({ success: true, data: content })
+    })
+})
+
+
+router.get('/:postId/markdown', function (req, res) {
+    const url = `${constants.mediumApiUrl}/posts/${req.params.postId}`
+
+    request(url, function (err, response, body) {
+        if (err) {
+            console.error(err)
+            return res.status(500).send()
+        }
+
+        const parsedBody = utils.formatMediumResponse(response)
+
+        if (!parsedBody.success) {
+            return res.status(404).send({ success: false, error: parsedBody.error })
+        }
+
+        const contentArray = parsedBody.payload.value.content.bodyModel.paragraphs.map(utils.getPostBodyParagraphMarkdown)
+        const content = contentArray.join("\n\n")
+
+        console.log(content)
+
+        res.send({ success: true, data: content })
+    })
+})
+
+
+router.get('/:postId/html', function (req, res) {
+const url = `${constants.mediumApiUrl}/posts/${req.params.postId}`
+
+    request(url, function (err, response, body) {
+        if (err) {
+            console.error(err)
+            return res.status(500).send()
+        }
+
+        const parsedBody = utils.formatMediumResponse(response)
+
+        if (!parsedBody.success) {
+            return res.status(404).send({ success: false, error: parsedBody.error })
+        }
+
+        const contentArray = parsedBody.payload.value.content.bodyModel.paragraphs.map(utils.getPostBodyParagraphHTML)
+
+        const content = contentArray.join("</br></br>")
+
+        res.send({ success: true, data: content })
+    })
+})
+
+
 module.exports = router
