@@ -13,7 +13,7 @@ router.get('/id_for/:username', function (req, res) {
     request(url, function (err, response, body) {
         if (err) {
             console.error(err)
-            return res.status(500).send()
+            return res.status(500).send( {success: false, error: err })
         }
 
         const parsedBody = utils.formatMediumResponse(response)
@@ -37,7 +37,7 @@ router.get('/:userId', function (req, res) {
     request(url, function (err, response, body) {
         if (err) {
             console.error(err)
-            return res.status(500).send()
+            return res.status(500).send({ success: false, error: err })
         }
 
         const parsedBody = utils.formatMediumResponse(response)
@@ -196,7 +196,6 @@ router.get('/:userId/articles', async function (req, res) {
         return new Promise((resolve, reject) => {
             request(url, function (err, response, body) {
                 if (err) {
-                    console.error(err)
                     return reject(err)
                 }
 
