@@ -6,8 +6,10 @@ const app = express()
 
 // Routes and middleware
 const usersRouter = require('./routes/users')
+const postsRouter = require('./routes/posts')
 
 app.use('/users', usersRouter)
+app.use('/posts', postsRouter)
 
 
 // Error handlers
