@@ -337,5 +337,45 @@ router.get('/:userId/top-articles', async function (req, res) {
 })
 
 
+router.get('/:userId/lists', async function (req, res) {
+    const url = `${constants.mediumApiUrl}/users/${req.params.userId}`
+
+    request(url, function (err, response, body) {
+        if (err) {
+            console.error(err)
+            return res.status(500).send({success: false, error: err})
+        }
+
+        const parsedBody = utils.formatMediumResponse(response)
+
+        if (!parsedBody.success) {
+            return res.status(500).send({success: false, error: parsedBody.error})
+        }
+
+        const username = parsedBody.payload.value.username
+        const listsUrl = `${constants.mediumBaseUrl}/@${username}/lists`
+
+        request(listsUrl, function (err, response, body) {
+            if (err) {
+                console.error(err)
+                return res.status(500).send({success: false, error: err})
+            }
+
+            catalogRegex = /Catalog:[a-zA-Z0-9-]{12}/g
+            const matches = body.match(catalogRegex)
+
+            if (!matches) {
+                return res.send({success: true, data: []})
+            }
+
+            const catalogIds = matches.map(catalog => catalog.replace('Catalog:', ''))
+            const uniqueCatalogIds = [...new Set(catalogIds)]
+            res.send({success: true, data: uniqueCatalogIds})
+
+        })
+    })
+})
+
+
 
 module.exports = router

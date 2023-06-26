@@ -351,6 +351,43 @@ paths:
                     items:
                       type: string
                       example: 03hO6bnd6jap
+  "/users/{userId}/lists":
+    get:
+      summary: Get User's Lists
+      tags:
+        - Users
+      description: Returns the list of `listIds` of the user's lists.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Unique hash id assigned to every single Medium user.
+          schema:
+            type: string
+            example: 24babe9bccb4
+        - name: count
+          in: query
+          required: false
+          description: To limit the number of results.
+          schema:
+            type: integer
+            example: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: string
+                      example: 1f9f2037ef8e
   "/publications/id-for/{publicationSlug}":
     get:
       summary: Get Publication ID
@@ -748,3 +785,67 @@ paths:
                     type: string
                     example: <h1>6 Side Business Ideas to Start Making Extra
                       Money</h1></br></br><img src='https://miro...
+  "/articles/{articleId}/responses":
+    get:
+      summary: Get Article Responses
+      tags:
+        - Articles
+      description: >
+        Returns the article responses
+      
+      
+        **Note:** This endpoint returns a list of ids. You can then get the responses using the `/articles/{articleId}` endpoint.
+      parameters:
+        - name: articleId
+          in: path
+          required: true
+          description: It's a unique hash id assigned to every Medium article.
+          schema:
+            type: string
+            example: 2cadf5e2561e
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: string
+                      example: 54a7237c125f
+  "/articles/{articleId}/related":
+    get:
+      summary: Get Related Articles
+      tags:
+        - Articles
+      description: Returns a list of 4 related articles (from the same author or publication)
+      parameters:
+        - name: articleId
+          in: path
+          required: true
+          description: It's a unique hash id assigned to every Medium article.
+          schema:
+            type: string
+            example: 2cadf5e2561e
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: string
+                      example: 2a4af7ee7f1c

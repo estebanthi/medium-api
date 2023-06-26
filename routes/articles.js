@@ -144,4 +144,60 @@ const url = `${constants.mediumApiUrl}/posts/${req.params.articleId}`
 })
 
 
+router.get('/:articleId/responses', function (req, res) {
+    const url = `${constants.mediumApiUrl}/posts/${req.params.articleId}/responses`
+
+    request(url, function (err, response, body) {
+        if (err) {
+            console.error(err)
+            return res.status(500).send()
+        }
+
+        const parsedBody = utils.formatMediumResponse(response)
+
+        if (!parsedBody.success) {
+            return res.status(404).send({ success: false, error: parsedBody.error })
+        }
+
+        const responses = parsedBody.payload.value.map(response => response.id)
+
+        res.send({ success: true, data: responses })
+    })
+})
+
+
+router.get('/:articleId/related', function (req, res) {
+    const url = `${constants.mediumApiUrl}/posts/${req.params.articleId}`
+
+    request(url, function (err, response, body) {
+        if (err) {
+            console.error(err)
+            return res.status(500).send()
+        }
+
+        const parsedBody = utils.formatMediumResponse(response)
+
+        if (!parsedBody.success) {
+            return res.status(404).send({success: false, error: parsedBody.error})
+        }
+
+        const postUrl = parsedBody.payload.value.mediumUrl
+
+        request(postUrl, function (err, response, body) {
+            if (err) {
+                console.error(err)
+                return res.status(500).send()
+            }
+
+            const relatedArticlesRegex = /\"HomeFeedItem\",\"post\":{\"__ref\":\"Post:[a-zA-Z0-9]{12}/g
+            const relatedArticles = body.match(relatedArticlesRegex).map(article => article.split(":")[3])
+            const uniqueRelatedArticles = [...new Set(relatedArticles)]
+
+            res.send({success: true, data: uniqueRelatedArticles})
+        })
+    })
+})
+
+
+
 module.exports = router
