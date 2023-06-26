@@ -286,6 +286,11 @@ router.get('/:userId/top-articles', async function (req, res) {
                 const postIds = Object.keys(postsData)
                 posts = posts.concat(postIds)
 
+                if (count && posts.length >= count) {
+                    posts = posts.slice(0, count)
+                    return resolve()
+                }
+
                 if (parsedBody.payload.paging.next) {
                     return resolve(getPosts(`${baseUrl}&to=${parsedBody.payload.paging.next.to}`))
                 }
@@ -297,7 +302,6 @@ router.get('/:userId/top-articles', async function (req, res) {
 
     try {
         await getPosts(baseUrl)
-        console.log(posts)
         const postsWithClaps = await Promise.all(posts.map(postId => {
             return new Promise((resolve, reject) => {
                 const url = `${constants.mediumApiUrl}/posts/${postId}`
@@ -317,7 +321,6 @@ router.get('/:userId/top-articles', async function (req, res) {
                 })
             })
         }))
-        console.log(postsWithClaps)
 
         const sortedPosts = postsWithClaps.sort((a, b) => {
             return b.virtuals.totalClapCount - a.virtuals.totalClapCount
