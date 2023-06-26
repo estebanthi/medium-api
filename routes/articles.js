@@ -70,7 +70,7 @@ router.get('/:articleId', function (req, res) {
 
 
 router.get('/:articleId/content', function (req, res) {
-    const url = `${constants.mediumApiUrl}/posts/${req.params.article}`
+    const url = `${constants.mediumApiUrl}/posts/${req.params.articleId}`
 
     request(url, function (err, response, body) {
         if (err) {

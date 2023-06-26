@@ -22,7 +22,7 @@ router.get('/id-for/:publicationSlug', function (req, res) {
             }
 
             const publicationId = parsedBody.payload.collection.id
-            res.send({success: true, data: {publicationId}})
+            res.send({success: true, data: publicationId})
         })
     })
 
