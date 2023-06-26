@@ -115,8 +115,6 @@ router.get('/:articleId/markdown', function (req, res) {
         const contentArray = parsedBody.payload.value.content.bodyModel.paragraphs.map(utils.getPostBodyParagraphMarkdown)
         const content = contentArray.join("\n\n")
 
-        console.log(content)
-
         res.send({ success: true, data: content })
     })
 })
