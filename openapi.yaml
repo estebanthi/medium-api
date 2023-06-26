@@ -141,7 +141,7 @@ paths:
                         example: https://miro.medium.com/1*sPkU-dWfO_U6_Om7knbXtQ.jpeg
                       banner:
                         type: string
-                        example: https://miro.medium.com/
+                        example:
                       followersCount:
                         type: integer
                         format: int32
@@ -239,7 +239,7 @@ paths:
                     type: array
                     items:
                       type: string
-                      example: null
+                      example: 1044fc419f11
   "/users/{userId}/articles":
     get:
       summary: Get User's Articles
@@ -317,6 +317,9 @@ paths:
       description: |-
         Returns a list of `articleIds` of user's articles, sorted by number
         of claps, for a given `userId`.
+        
+        
+        **Note:** If `count` is too high, it may take a long time/crash depending on the server.
       parameters:
         - name: userId
           in: path
@@ -486,7 +489,7 @@ paths:
           description: Unique hash id assigned to every single Medium publication.
           schema:
             type: string
-            example: 24babe9bccb4
+            example: eca1ba5ae1ca
         - name: count
           in: query
           required: false
