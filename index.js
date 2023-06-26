@@ -1,8 +1,12 @@
 'use strict'
 const express = require('express')
+const cors = require('cors')
 
 // Create the express app
 const app = express()
+
+// Enable CORS
+app.use(cors())
 
 // Routes and middleware
 const usersRouter = require('./routes/users')
