@@ -6,8 +6,8 @@ const utils = require("../utils");
 const router = express.Router()
 
 
-router.get('/:postId', function (req, res) {
-    const url = `${constants.mediumApiUrl}/posts/${req.params.postId}`
+router.get('/:articleId', function (req, res) {
+    const url = `${constants.mediumApiUrl}/posts/${req.params.articleId}`
 
     request(url, function (err, response, body) {
         if (err) {
@@ -43,6 +43,7 @@ router.get('/:postId', function (req, res) {
 
 
         const post = {
+            articleId: req.params.articleId,
             title,
             subtitle,
             authorId,
@@ -68,8 +69,8 @@ router.get('/:postId', function (req, res) {
 })
 
 
-router.get('/:postId/content', function (req, res) {
-    const url = `${constants.mediumApiUrl}/posts/${req.params.postId}`
+router.get('/:articleId/content', function (req, res) {
+    const url = `${constants.mediumApiUrl}/posts/${req.params.article}`
 
     request(url, function (err, response, body) {
         if (err) {
@@ -96,8 +97,8 @@ router.get('/:postId/content', function (req, res) {
 })
 
 
-router.get('/:postId/markdown', function (req, res) {
-    const url = `${constants.mediumApiUrl}/posts/${req.params.postId}`
+router.get('/:articleId/markdown', function (req, res) {
+    const url = `${constants.mediumApiUrl}/posts/${req.params.articleId}`
 
     request(url, function (err, response, body) {
         if (err) {
@@ -121,8 +122,8 @@ router.get('/:postId/markdown', function (req, res) {
 })
 
 
-router.get('/:postId/html', function (req, res) {
-const url = `${constants.mediumApiUrl}/posts/${req.params.postId}`
+router.get('/:articleId/html', function (req, res) {
+const url = `${constants.mediumApiUrl}/posts/${req.params.articleId}`
 
     request(url, function (err, response, body) {
         if (err) {

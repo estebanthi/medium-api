@@ -5,9 +5,9 @@ const utils = require("../utils");
 
 const router = express.Router()
 
-router.get('/id_for/:slug', function (req, res) {
+router.get('/id-for/:publicationSlug', function (req, res) {
 
-        const url = `${constants.mediumBaseUrl}/${req.params.slug}?format=json`
+        const url = `${constants.mediumBaseUrl}/${req.params.publicationSlug}?format=json`
 
         request(url, function (err, response, body) {
             if (err) {
@@ -58,6 +58,7 @@ router.get('/:publicationId', function (req, res) {
         res.send({
             success: true,
             data: {
+                publicationId: req.params.publicationId,
                 name,
                 description,
                 slug,

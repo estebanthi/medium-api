@@ -6,7 +6,7 @@ const utils = require("../utils");
 const router = express.Router()
 
 
-router.get('/id_for/:username', function (req, res) {
+router.get('/id-for/:username', function (req, res) {
 
     const url = `${constants.mediumApiUrl}/users/@${req.params.username}`
 
@@ -23,7 +23,7 @@ router.get('/id_for/:username', function (req, res) {
         }
 
         const userId = parsedBody.payload.value.userId
-        res.send({ success: true, data: { userId } })
+        res.send({ success: true, data: userId })
 
 
     })
@@ -49,8 +49,8 @@ router.get('/:userId', function (req, res) {
         const username = parsedBody.payload.references.User[req.params.userId].username
         const fullName = parsedBody.payload.references.User[req.params.userId].name
         const bio = parsedBody.payload.references.User[req.params.userId].bio
-        const avatar = utils.getMediumMediaUrl(parsedBody.payload.references.User[req.params.userId].imageId)
-        const banner = utils.getMediumMediaUrl(parsedBody.payload.references.User[req.params.userId].backgroundImageId)
+        const avatar = parsedBody.payload.references.User[req.params.userId].imageId ? utils.getMediumMediaUrl(parsedBody.payload.references.User[req.params.userId].imageId) : null
+        const banner = parsedBody.payload.references.User[req.params.userId].imageId ? utils.getMediumMediaUrl(parsedBody.payload.references.User[req.params.userId].backgroundImageId) : null
         const followersCount = parsedBody.payload.references.SocialStats[req.params.userId].usersFollowedByCount
         const followingCount = parsedBody.payload.references.SocialStats[req.params.userId].usersFollowedCount
         const twitter = parsedBody.payload.references.User[req.params.userId].twitterScreenName
