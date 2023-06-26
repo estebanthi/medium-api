@@ -50,7 +50,7 @@ router.get('/:userId', function (req, res) {
         const fullName = parsedBody.payload.references.User[req.params.userId].name
         const bio = parsedBody.payload.references.User[req.params.userId].bio
         const avatar = parsedBody.payload.references.User[req.params.userId].imageId ? utils.getMediumMediaUrl(parsedBody.payload.references.User[req.params.userId].imageId) : null
-        const banner = parsedBody.payload.references.User[req.params.userId].imageId ? utils.getMediumMediaUrl(parsedBody.payload.references.User[req.params.userId].backgroundImageId) : null
+        const banner = parsedBody.payload.references.User[req.params.userId].backgroundImageId ? utils.getMediumMediaUrl(parsedBody.payload.references.User[req.params.userId].backgroundImageId) : null
         const followersCount = parsedBody.payload.references.SocialStats[req.params.userId].usersFollowedByCount
         const followingCount = parsedBody.payload.references.SocialStats[req.params.userId].usersFollowedCount
         const twitter = parsedBody.payload.references.User[req.params.userId].twitterScreenName
