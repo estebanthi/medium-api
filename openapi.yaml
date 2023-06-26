@@ -1,0 +1,747 @@
+---
+openapi: 3.0.3
+info:
+  title: Medium Public Unofficial API
+  description: >-
+    
+    This is an unofficial Medium API used to fetch public data such as
+
+    users, articles, lists, etc...
+
+
+
+
+
+    This API is heavily inspired by [Nishu Jain's Medium API](https://mediumapi.com/), in fact it's nearly the same, I just wanted to make it open source and free.
+
+
+
+
+
+    It is done using Medium's "official" API - https://medium.com/_/api (I quote official because there is no documentation for this API and no way of knowing it exists without using Developer Tools in the web browser) - and some web scraping.
+
+
+
+
+
+    Useful links:
+
+
+
+    - [API's repository](https://github.com/estebanthi/medium-api)
+
+
+
+    - [OpenAPI specification](https://github.com/estebanthi/medium-api/blob/master/openapi.yaml)
+  contact:
+    email: contact@esteban-thilliez.com
+  version: "1.0"
+servers:
+  - url: https://mediumapi.esteban-thilliez.com/
+tags:
+  - name: Users
+  - name: Publications
+  - name: Articles
+  - name: Misc
+  - name: Lists
+  - name: Search
+paths:
+  "/users/id-for/{username}":
+    get:
+      summary: Get User ID
+      tags:
+        - Users
+      description: >
+        
+        Returns the unique `userId` for the given `username`.
+
+
+
+
+
+        **Note:** You can find the `username` from the user's/author's profile page URL.
+
+
+
+        - **username**.medium.com
+
+
+
+        - medium.com/@**username**
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: It's a unique string chosen by every single Medium user.
+          schema:
+            type: string
+            example: estebanthi
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: string
+                    description: Unique hash id of the user.
+                    example: 24babe9bccb4
+  "/users/{userId}":
+    get:
+      summary: Get User Info
+      tags:
+        - Users
+      description: >-
+        Returns user related information like *Full name, Bio, Followers
+
+        count, Following count, Twitter username, Profile-image URL, User ID, etc...*
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: It's a unique hash id assigned to every single Medium user.
+          schema:
+            type: string
+            example: 24babe9bccb4
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      userId:
+                        type: string
+                        example: 24babe9bccb4
+                      username:
+                        type: string
+                        example: estebanthi
+                      fullName:
+                        type: string
+                        example: Esteban Thilliez
+                      bio:
+                        type: string
+                        example: "I’m Esteban, and I enjoy writing about programming, trading,
+                          productivity, knowledge management, books and movies!
+                          Contact me here: contact@esteban-thilliez.com"
+                      avatar:
+                        type: string
+                        example: https://miro.medium.com/1*sPkU-dWfO_U6_Om7knbXtQ.jpeg
+                      banner:
+                        type: string
+                        example: https://miro.medium.com/
+                      followersCount:
+                        type: integer
+                        format: int32
+                        example: 1001
+                      followingCount:
+                        type: integer
+                        format: int32
+                        example: 6
+                      twitter:
+                        type: string
+                        example: null
+                      isCreatorPartnerProgramEnrolled:
+                        type: boolean
+                        example: true
+                      topWriterIn:
+                        type: array
+                        items:
+                          type: string
+                          example: productivity
+                      joinedDate:
+                        type: string
+                        example: 2021-06-17T07:11:06.041Z
+  "/users/{userId}/following":
+    get:
+      summary: Get User Following
+      tags:
+        - Users
+      description: Returns the list of `userIds` of the user's followings.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Unique hash id assigned to every single Medium user.
+          schema:
+            type: string
+            example: 24babe9bccb4
+        - name: count
+          in: query
+          required: false
+          description: To limit the number of results.
+          schema:
+            type: integer
+            example: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: string
+                      example: 27f2a48b3308
+  "/users/{userId}/followers":
+    get:
+      summary: Get User Followers
+      tags:
+        - Users
+      description: |
+        
+        Returns the list of `userIds` of the user's followers.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Unique hash id assigned to every single Medium user.
+          schema:
+            type: string
+            example: 24babe9bccb4
+        - name: count
+          in: query
+          required: false
+          description: To limit the number of results.
+          schema:
+            type: integer
+            example: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: string
+                      example: null
+  "/users/{userId}/articles":
+    get:
+      summary: Get User's Articles
+      tags:
+        - Users
+      description: Returns the list of articles (`articleIds`) written by the user.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Unique hash id assigned to every single Medium user.
+          schema:
+            type: string
+            example: 24babe9bccb4
+        - name: count
+          in: query
+          required: false
+          description: To limit the number of results.
+          schema:
+            type: integer
+            example: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: string
+                      example: 2cadf5e2561e
+  "/users/{userId}/publications":
+    get:
+      summary: Get User's Publications
+      tags:
+        - Users
+      description: |-
+        Returns the list of publications (`publicationIds`) where the user
+        is the editor.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Unique hash id assigned to every single Medium user.
+          schema:
+            type: string
+            example: 24babe9bccb4
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: string
+                      example: a648dc4ecb66
+  "/users/{userId}/top-articles":
+    get:
+      summary: Get User's Top Articles
+      tags:
+        - Users
+      description: |-
+        Returns a list of `articleIds` of user's articles, sorted by number
+        of claps, for a given `userId`.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Unique hash id assigned to every single Medium user.
+          schema:
+            type: string
+            example: 24babe9bccb4
+        - name: count
+          in: query
+          required: false
+          description: To limit the number of results.
+          schema:
+            type: integer
+            example: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: string
+                      example: 03hO6bnd6jap
+  "/publications/id-for/{publicationSlug}":
+    get:
+      summary: Get Publication ID
+      tags:
+        - Publications
+      description: >
+        
+        Returns the unique `publicationId` for the given `publicationSlug`.
+
+
+
+
+
+        **Note:** You can find the `publication_slug` from the publication's homepage URL.
+
+
+
+        - medium.com/**publicationSlug**
+      parameters:
+        - name: publicationSlug
+          in: path
+          required: true
+          description: It's a lowercased hyphen-separated unique string alloted to each
+            Medium Publication.
+          schema:
+            type: string
+            example: illumination
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: string
+                    description: Unique hash id of the publication.
+                    example: eca1ba5ae1ca
+  "/publications/{publicationId}":
+    get:
+      summary: Get Publication Info
+      tags:
+        - Publications
+      description: >-
+        
+        Returns publication related information like *Name, Description, Followers
+
+        count, publication ID, etc...*
+
+
+
+
+
+        It takes `publicationId` as the path parameter.
+      parameters:
+        - name: publicationId
+          in: path
+          required: true
+          description: It's a unique hash id assigned to every single Medium publication.
+          schema:
+            type: string
+            example: eca1ba5ae1ca
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      publicationId:
+                        type: string
+                        example: eca1ba5ae1ca
+                      name:
+                        type: string
+                        example: ILLUMINATION
+                      description:
+                        type: string
+                        example: We curate and disseminate outstanding articles from diverse domains and
+                          disciplines to create fusion and synergy.
+                      slug:
+                        type: string
+                        example: illumination
+                      creator:
+                        type: string
+                        example: dd3942a5498a
+                      contributors:
+                        type: array
+                        items:
+                          type: string
+                          example: 3ed16e2a5be
+                      tags:
+                        type: array
+                        items:
+                          type: string
+                          example: TECHNOLOGY
+                      followersCount:
+                        type: integer
+                        format: int32
+                        example: 69392
+                      image:
+                        type: string
+                        example: https://miro.medium.com/undefined
+                      logo:
+                        type: string
+                        example: https://miro.medium.com/1*AZxiin1Cvws3J0TwNUP2sQ.png
+                      twitter:
+                        type: string
+                        example: digitalmehmet
+                      facebook:
+                        type: string
+                        example: MediumIllumination
+                      email:
+                        type: string
+                        example: myildizmel@gmail.com
+  "/publications/{publicationId}/articles":
+    get:
+      summary: Get Publications's Articles
+      tags:
+        - Publications
+      description: Returns the list of articles (`articleIds`) published in the publication.
+      parameters:
+        - name: publicationId
+          in: path
+          required: true
+          description: Unique hash id assigned to every single Medium publication.
+          schema:
+            type: string
+            example: 24babe9bccb4
+        - name: count
+          in: query
+          required: false
+          description: To limit the number of results.
+          schema:
+            type: integer
+            example: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: string
+                      example: 97877675bbac
+  "/publications/{publicationId}/newsletter":
+    get:
+      summary: Get Publication's Newsletter Info
+      tags:
+        - Publications
+      description: >-
+        
+        Returns publication's newsletter related information like *Name, Description, Subscribers
+
+        count, etc...*
+
+
+
+
+
+        It takes `publicationId` as the path parameter.
+      parameters:
+        - name: publicationId
+          in: path
+          required: true
+          description: It's a unique hash id assigned to every single Medium publication.
+          schema:
+            type: string
+            example: eca1ba5ae1ca
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: ILLUMINATION Highlights
+                      description:
+                        type: string
+                        example: We share our daily distribution list, featured stories, and progress
+                          updates from our publication. Writer Inquires
+                          https://digitalmehmet.com/contact We offer a free
+                          Slack workspace for collaboration.
+                      slug:
+                        type: string
+                        example: illumination-highlights
+                      subscribersCount:
+                        type: string
+                        example: 4051
+  "/articles/{articleId}":
+    get:
+      summary: Get Article Info
+      tags:
+        - Articles
+      description: |-
+        Returns the article related information such as *Title, Subtitle,
+        Tags,  Topics, Publication, etc…*
+      parameters:
+        - name: articleId
+          in: path
+          required: true
+          description: It's a unique hash id assigned to every Medium article.
+          schema:
+            type: string
+            example: 2cadf5e2561e
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      articleId:
+                        type: string
+                        example: 2cadf5e2561e
+                      title:
+                        type: string
+                        example: 6 Side Business Ideas to Start Making Extra Money
+                      subtitle:
+                        type: string
+                        example: If you want to be free and in control of your income, it’s important to
+                          start side businesses now.
+                      author:
+                        type: string
+                        example: 24babe9bccb4
+                      publishedAt:
+                        type: string
+                        example: 2023-06-25T17:01:33.006Z
+                      updatedAt:
+                        type: string
+                        example: null
+                      url:
+                        type: string
+                        example: https://medium.com/@estebanthi/6-side-business-ideas-to-start-making-extra-money-2cadf5e2561e
+                      publicationId:
+                        type: string
+                        example: null
+                      tags:
+                        type: array
+                        items:
+                          type: string
+                          example: Money
+                      topics:
+                        type: array
+                        items:
+                          type: string
+                          example: Money
+                      wordCount:
+                        type: integer
+                        format: integer
+                        example: 1817
+                      readingTime:
+                        type: number
+                        example: 7.056603773584905
+                      clapCount:
+                        type: integer
+                        example: 1
+                      voters:
+                        type: integer
+                        example: 1
+                      responsesCount:
+                        type: integer
+                        format: int32
+                        example: 1
+                      lang:
+                        type: string
+                        example: en
+                      requiresSubscription:
+                        type: boolean
+                        example: true
+                      isSeries:
+                        type: boolean
+                        example: false
+                      previewImage:
+                        type: string
+                        example: https://miro.medium.com/1*DIWyvacsApA4926hQUiS_A.jpeg
+  "/articles/{articleId}/content":
+    get:
+      summary: Get Article Content
+      tags:
+        - Articles
+      description: Returns the raw article content
+      parameters:
+        - name: articleId
+          in: path
+          required: true
+          description: It's a unique hash id assigned to every Medium article.
+          schema:
+            type: string
+            example: 2cadf5e2561e
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: string
+                    example: 6 Side Business Ideas to Start Making Extra Money\n\n\n\nIn a previo...
+  "/articles/{articleId}/markdown":
+    get:
+      summary: Get Article Markdown
+      tags:
+        - Articles
+      description: Returns the article content (markdown)
+      parameters:
+        - name: articleId
+          in: path
+          required: true
+          description: It's a unique hash id assigned to every Medium article.
+          schema:
+            type: string
+            example: 2cadf5e2561e
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: string
+                    example: |-
+                      # 6 Side Business Ideas to Start Making Extra Money
+
+                      ![](https://miro...
+  "/articles/{articleId}/html":
+    get:
+      summary: Get Article HTML
+      tags:
+        - Articles
+      description: Returns the article content (html)
+      parameters:
+        - name: articleId
+          in: path
+          required: true
+          description: It's a unique hash id assigned to every Medium article.
+          schema:
+            type: string
+            example: 2cadf5e2561e
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: string
+                    example: <h1>6 Side Business Ideas to Start Making Extra
+                      Money</h1></br></br><img src='https://miro...
