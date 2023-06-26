@@ -318,7 +318,6 @@ router.get('/:userId/top-articles', async function (req, res) {
         }))
 
         const sortedPosts = postsWithClaps.sort((a, b) => {
-            console.log(a.virtuals.totalClapCount, b.virtuals.totalClapCount)
             return b.virtuals.totalClapCount - a.virtuals.totalClapCount
         })
 
