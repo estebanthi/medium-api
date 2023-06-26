@@ -297,6 +297,7 @@ router.get('/:userId/top-articles', async function (req, res) {
 
     try {
         await getPosts(baseUrl)
+        console.log(posts)
         const postsWithClaps = await Promise.all(posts.map(postId => {
             return new Promise((resolve, reject) => {
                 const url = `${constants.mediumApiUrl}/posts/${postId}`
@@ -316,6 +317,7 @@ router.get('/:userId/top-articles', async function (req, res) {
                 })
             })
         }))
+        console.log(postsWithClaps)
 
         const sortedPosts = postsWithClaps.sort((a, b) => {
             return b.virtuals.totalClapCount - a.virtuals.totalClapCount
