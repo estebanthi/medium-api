@@ -6,7 +6,7 @@ const utils = require("../utils");
 const router = express.Router()
 
 
-router.get("/:publicationSlug", async function (req, res) {
+router.get("/:publicationId", async function (req, res) {
     const count = req.query.count || 30
     const searchQuery = req.query.q
 
@@ -14,10 +14,25 @@ router.get("/:publicationSlug", async function (req, res) {
         return res.status(400).send({success: false, error: "Missing query parameter 'q'"})
     }
 
-    const url = `${constants.mediumApiUrl}/collections/${req.params.publicationSlug}/search?q=${searchQuery}`
-    console.log(url)
-
     let posts = []
+
+    const getSlug = async () => {
+        return new Promise((resolve, reject) => {
+            request(`${constants.mediumApiUrl}/collections/${req.params.publicationId}/stream`, function (err, response, body) {
+                if (err) {
+                    return reject(err)
+                }
+
+                const parsedBody = utils.formatMediumResponse(response)
+
+                if (!parsedBody.success) {
+                    return reject(parsedBody.error)
+                }
+
+                return resolve(parsedBody.payload.collection.slug)
+            })
+        })
+    }
 
     const getPosts = async (url) => {
         return new Promise((resolve, reject) => {
@@ -58,6 +73,9 @@ router.get("/:publicationSlug", async function (req, res) {
     }
 
     try {
+
+        const slug = await getSlug()
+        const url = `${constants.mediumApiUrl}/collections/${slug}/search?q=${searchQuery}`
         await getPosts(url)
         res.send({success: true, data: posts.slice(0, count)})
     }

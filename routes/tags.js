@@ -97,7 +97,7 @@ router.get('/:tag/top-writers', async function (req, res) {
 
 
 
-router.get('/:tag/posts', function (req, res) {
+router.get('/:tag/articles', function (req, res) {
     const tag = req.params.tag
     const mode = req.query.mode || 'hot'
 

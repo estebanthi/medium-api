@@ -389,6 +389,66 @@ paths:
                     items:
                       type: string
                       example: 1f9f2037ef8e
+  "/users/{userId}/newsletters":
+    get:
+      summary: Get User's Newsletters
+      tags:
+        - Users
+      description: Returns the list of `newsletterIds` of the user's newsletters.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Unique hash id assigned to every single Medium user.
+          schema:
+            type: string
+            example: 24babe9bccb4
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: string
+                      example: c23bb52346fa
+  "/users/{userId}/tags":
+    get:
+      summary: Get User's Tags
+      tags:
+        - Users
+      description: Returns the list of `tagIds` of the user's tags (interests).
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Unique hash id assigned to every single Medium user.
+          schema:
+            type: string
+            example: 24babe9bccb4
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: string
+                      example: business
   "/publications/id-for/{publicationSlug}":
     get:
       summary: Get Publication ID
@@ -589,6 +649,9 @@ paths:
                   data:
                     type: object
                     properties:
+                      newsletterId:
+                        type: string
+                        example: 1b9e8f5e4c3f
                       name:
                         type: string
                         example: ILLUMINATION Highlights
@@ -850,3 +913,215 @@ paths:
                     items:
                       type: string
                       example: 2a4af7ee7f1c
+  "/articles/trending":
+    get:
+      summary: Get Trending Articles
+      tags:
+        - Articles
+      description: Returns a list of trending articles
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: 58d060bf465c
+  "/tags/{tag}/articles":
+    get:
+      summary: Get Tag Posts
+      tags:
+        - Tags
+      description: Returns a list of posts for a given tag with the mode passed in parameter
+      parameters:
+        - name: tag
+          in: path
+          required: true
+          description: It's a unique slug assigned to every Medium tag.
+          schema:
+            type: string
+            example: money
+        - name: mode
+          in: query
+          required: false
+          description: It's the mode of the tag posts. It can be `hot`, `new`, `top_year`, `top_month`, `top_week`, `top_all_time`.
+          schema:
+            type: string
+            example: new
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: 230e6b97ab03
+  "/tags/{tag}/related":
+    get:
+      summary: Get Related Tags
+      tags:
+        - Tags
+      description: Returns a list of related tags
+      parameters:
+        - name: tag
+          in: path
+          required: true
+          description: It's a unique slug assigned to every Medium tag.
+          schema:
+            type: string
+            example: money
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: string
+                      example: business
+  "/tags/{tag}/top-writers":
+    get:
+      summary: Get Top Writers
+      tags:
+        - Tags
+      description: Returns a list of top writers for a given tag
+      parameters:
+        - name: tag
+          in: path
+          required: true
+          description: It's a unique slug assigned to every Medium tag.
+          schema:
+            type: string
+            example: money
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: string
+                      example: 9c6cbf57703
+  "/newsletters/{newsletterId}":
+    get:
+      summary: Get Newsletter
+      tags:
+        - Newsletters
+      description: Returns a newsletter
+      parameters:
+        - name: newsletterId
+          in: path
+          required: true
+          description: It's a unique hash id assigned to every Medium newsletter.
+          schema:
+            type: string
+            example: 9c6cbf57703
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  newsletterId:
+                    type: string
+                    example: d8e1a644d2dd
+                  author:
+                    type: string
+                    example: dd3942a5498a
+                  description:
+                    type: string
+                    example: A weekly digest of the best of our publication.
+                  slug:
+                    type: string
+                    example: illumination-highlights
+                  title:
+                    type: string
+                    example: Illumination Highlights
+                  newsletterBody:
+                    type: string
+                    example: ""
+                  replyTo:
+                    type: string
+                    example: contact@my-newsletter.com
+  "/search/{publicationId}":
+    get:
+      summary: Search in Publication
+      tags:
+        - Search
+      description: Returns a list of articles for a given publication matching the search query
+      parameters:
+        - name: publicationId
+          in: path
+          required: true
+          description: It's a unique hash id assigned to every Medium publication.
+          schema:
+            type: string
+            example: eca1ba5ae1ca
+        - name: q
+          in: query
+          required: true
+          description: It's the search query.
+          schema:
+            type: string
+            example: money
+        - name: count
+          in: query
+          required: false
+          description: It's the number of articles to return.
+          schema:
+            type: integer
+            example: 30
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  articles:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: 6fa8bcb2a82c
