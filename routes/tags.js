@@ -23,7 +23,7 @@ router.get('/:tag/related', function (req, res) {
             return res.status(404).send({ success: false, error: parsedBody.error })
         }
 
-        const tags = parsedBody.payload.relatedTags.map(tag => tag.name)
+        const tags = parsedBody.payload.relatedTags.map(tag => tag.slug)
 
         res.send({success: true, data: tags})
     })
@@ -31,7 +31,7 @@ router.get('/:tag/related', function (req, res) {
 
 
 router.get('/:tag/top-writers', async function (req, res) {
-    const count = req.query.count
+    const count = req.query.count || 10
     const tag = req.params.tag
 
     let baseUrl = `${constants.mediumApiUrl}/tags/${tag}/top-writers/stream?limit=50`

@@ -1022,6 +1022,13 @@ paths:
           schema:
             type: string
             example: money
+        - name: count
+          in: query
+          required: false
+          description: It's the number of top writers to return.
+          schema:
+            type: integer
+            example: 10
       responses:
         "200":
           description: OK
@@ -1051,7 +1058,7 @@ paths:
           description: It's a unique hash id assigned to every Medium newsletter.
           schema:
             type: string
-            example: 9c6cbf57703
+            example: d8e1a644d2dd
       responses:
         "200":
           description: OK
