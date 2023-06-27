@@ -6,6 +6,28 @@ const utils = require("../utils");
 const router = express.Router()
 
 
+
+router.get('/trending', function (req, res) {
+    const url = `${constants.mediumApiUrl}/tutu/posts/trending`
+
+    request(url, function (err, response, body) {
+        if (err) {
+            console.error(err)
+            return res.status(500).send({success: false, error: err})
+        }
+
+        const parsedBody = utils.formatMediumResponse(response)
+
+        if (!parsedBody.success) {
+            return res.status(404).send({ success: false, error: parsedBody.error })
+        }
+
+        const posts = parsedBody.payload.postIds
+        res.send({success: true, data: posts})
+    })
+})
+
+
 router.get('/:articleId', function (req, res) {
     const url = `${constants.mediumApiUrl}/posts/${req.params.articleId}`
 

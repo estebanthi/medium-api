@@ -377,5 +377,49 @@ router.get('/:userId/lists', async function (req, res) {
 })
 
 
+router.get('/:userId/newsletters', async function (req, res) {
+    const url = `${constants.mediumApiUrl}/users/${req.params.userId}/newsletters`
+
+    request(url, function (err, response, body) {
+        if (err) {
+            console.error(err)
+            return res.status(500).send({success: false, error: err})
+        }
+
+        const parsedBody = utils.formatMediumResponse(response)
+
+        if (!parsedBody.success) {
+            return res.status(500).send({success: false, error: parsedBody.error})
+        }
+
+        const newsletters = parsedBody.payload.newsletters
+        const newsletterIds = newsletters.map(newsletter => newsletter.newsletterV3Id)
+        res.send({success: true, data: newsletterIds})
+    })
+})
+
+
+router.get('/:userId/tags', function (req, res) {
+    const url = `${constants.mediumApiUrl}/users/${req.params.userId}/meta`
+
+    request(url, function (err, response, body) {
+        if (err) {
+            console.error(err)
+            return res.status(500).send({success: false, error: err})
+        }
+
+        const parsedBody = utils.formatMediumResponse(response)
+
+        if (!parsedBody.success) {
+            return res.status(500).send({success: false, error: parsedBody.error})
+        }
+
+        const tags = parsedBody.payload.value.authorTags
+        const tagSlugs = tags.map(tag => tag.slug)
+        res.send({success: true, data: tagSlugs})
+    })
+})
+
+
 
 module.exports = router

@@ -42,8 +42,9 @@ tags:
   - name: Users
   - name: Publications
   - name: Articles
-  - name: Misc
+  - name: Tags
   - name: Lists
+  - name: Newsletters
   - name: Search
 paths:
   "/users/id-for/{username}":

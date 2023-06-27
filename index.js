@@ -12,12 +12,16 @@ app.use(cors())
 const usersRouter = require('./routes/users')
 const postsRouter = require('./routes/articles')
 const publicationsRouter = require('./routes/publications')
-const miscRouter = require('./routes/misc')
+const newslettersRouter = require('./routes/newsletters')
+const tagsRouter = require('./routes/tags')
+const searchRouter = require('./routes/search')
 
 app.use('/users', usersRouter)
 app.use('/articles', postsRouter)
 app.use('/publications', publicationsRouter)
-app.use('/', miscRouter)
+app.use('/newsletters', newslettersRouter)
+app.use('/tags', tagsRouter)
+app.use('/search', searchRouter)
 
 
 // Error handlers

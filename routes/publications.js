@@ -150,12 +150,13 @@ router.get('/:publicationId/newsletter', function (req, res) {
             return res.status(404).send({success: false, error: "Newsletter not found"})
         }
 
+        const newsletterId = newsletterData.newsletterV3Id
         const name = newsletterData.name
         const description = newsletterData.description
         const slug = newsletterData.newsletterSlug
         const subscribersCount = newsletterData.subscribersCount
 
-        res.send({success: true, data: {name, description, slug, subscribersCount}})
+        res.send({success: true, data: {newsletterId, name, description, slug, subscribersCount}})
     })
 })
 
