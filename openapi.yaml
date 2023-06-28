@@ -37,7 +37,7 @@ info:
     email: contact@esteban-thilliez.com
   version: "1.0"
 servers:
-  - url: https://mediumapi.esteban-thilliez.com/
+  - url: https://medium-api-one.vercel.app
 tags:
   - name: Users
   - name: Publications
@@ -1067,27 +1067,33 @@ paths:
               schema:
                 type: object
                 properties:
-                  newsletterId:
-                    type: string
-                    example: d8e1a644d2dd
-                  author:
-                    type: string
-                    example: dd3942a5498a
-                  description:
-                    type: string
-                    example: A weekly digest of the best of our publication.
-                  slug:
-                    type: string
-                    example: illumination-highlights
-                  title:
-                    type: string
-                    example: Illumination Highlights
-                  newsletterBody:
-                    type: string
-                    example: ""
-                  replyTo:
-                    type: string
-                    example: contact@my-newsletter.com
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      newsletterId:
+                        type: string
+                        example: d8e1a644d2dd
+                      author:
+                        type: string
+                        example: dd3942a5498a
+                      description:
+                        type: string
+                        example: A weekly digest of the best of our publication.
+                      slug:
+                        type: string
+                        example: illumination-highlights
+                      title:
+                        type: string
+                        example: Illumination Highlights
+                      newsletterBody:
+                        type: string
+                        example: ""
+                      replyTo:
+                        type: string
+                        example: contact@my-newsletter.com
   "/search/{publicationId}":
     get:
       summary: Search in Publication
@@ -1124,11 +1130,11 @@ paths:
               schema:
                 type: object
                 properties:
-                  articles:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          example: 6fa8bcb2a82c
+                      type: string
+                      example: 2a4af7ee7f1c
